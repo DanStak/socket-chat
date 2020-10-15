@@ -14,8 +14,8 @@ const LoginForm = ({ conversation, history }) => {
   const handleSetConversationParams = (event) => {
     event.preventDefault();
     if(isFormValid()) {
-      conversation.setName(name);
-      conversation.setRoom(room);
+      // conversation.setName(name);
+      // conversation.setRoom(room);
       history.push(`/conversation?room=${room}&name=${name}`)
     }
   }
@@ -51,4 +51,4 @@ const LoginForm = ({ conversation, history }) => {
   );
 };
 
-export default connect(withRouter(LoginForm));
+export default withRouter(LoginForm);

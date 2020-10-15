@@ -5,6 +5,7 @@ import { withRouter } from "react-router-dom";
 import io from 'socket.io-client';
 
 const SERVER_URL = 'http://localhost:5000'
+// const socket = io(SERVER_URL);
 
 class ConversationProvider extends React.Component {
   state = {
@@ -12,30 +13,30 @@ class ConversationProvider extends React.Component {
     room: '',
   }
 
-  socket = io(SERVER_URL);
 
 
-  componentDidMount() {
-    const {name, room} = queryString.parse(this.props.location.search);
-    if (name && room) {
-      this.setState({
-        name,
-        room
-      })
-    }
-  }
-
-  setName = (name) => {
-    this.setState({
-      name
-    })
-  }
-
-  setRoom = (room) => {
-    this.setState({
-      room
-    })
-  }
+  // componentDidMount() {
+  //   console.log('MOUNT W PROVIDERZE')
+  //   const {name, room} = queryString.parse(this.props.location.search);
+  //   if (name && room) {
+  //     this.setState({
+  //       name,
+  //       room
+  //     })
+  //   }
+  // }
+  //
+  // setName = (name) => {
+  //   this.setState({
+  //     name
+  //   })
+  // }
+  //
+  // setRoom = (room) => {
+  //   this.setState({
+  //     room
+  //   })
+  // }
 
   getContext = () =>({
       name: this.state.name,

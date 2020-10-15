@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import callIfCallable from "../../../utils/callIfCallable";
 import ClassNames from 'classnames';
 
-const FormInput = ({ placeholder, icon, label, onChange }) => {
+const FormInput = ({ placeholder = '', label = '', onChange = () => {} }) => {
   const [value, setValue] = useState('');
   const [isDanger, setIsDanger] = useState(false);
 
