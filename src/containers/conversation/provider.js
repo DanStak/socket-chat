@@ -5,44 +5,46 @@ import { withRouter } from "react-router-dom";
 import io from 'socket.io-client';
 
 const SERVER_URL = 'http://localhost:5000'
-// const socket = io(SERVER_URL);
 
 class ConversationProvider extends React.Component {
-  state = {
-    name: '',
-    room: '',
+  constructor(props) {
+    super(props)
+    this.state = {
+      name: '',
+      room: '',
+    }
+    this.socket = io(SERVER_URL);
   }
 
 
+  componentDidMount() {
+    this.setSearchParamsFromUrl();
+  }
 
-  // componentDidMount() {
-  //   console.log('MOUNT W PROVIDERZE')
-  //   const {name, room} = queryString.parse(this.props.location.search);
-  //   if (name && room) {
-  //     this.setState({
-  //       name,
-  //       room
-  //     })
-  //   }
-  // }
-  //
-  // setName = (name) => {
-  //   this.setState({
-  //     name
-  //   })
-  // }
-  //
-  // setRoom = (room) => {
-  //   this.setState({
-  //     room
-  //   })
-  // }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if( this.props.location.search !== prevProps.location.search ) {
+      this.setSearchParamsFromUrl();
+    }
+  }
+
+  componentWillUnmount() {
+    this.socket.off()
+  }
+
+  setSearchParamsFromUrl = () => {
+    const {name, room} = queryString.parse(this.props.location.search);
+    if (name && room) {
+      this.setState({
+        name,
+        room
+      })
+    }
+  }
 
   getContext = () =>({
       name: this.state.name,
       room: this.state.room,
-      setName: this.setName,
-      setRoom: this.setRoom,
+      socket: this.socket,
   });
 
   render() {

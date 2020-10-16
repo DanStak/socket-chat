@@ -7,10 +7,10 @@ import ConversationProvider from "./containers/conversation/provider";
 
 const App = () => (
     <Router>
-      {/*<ConversationProvider>*/}
+      <ConversationProvider>
         <Route path='/' exact component={CreateOrJoinPage}/>
         <Route path='/conversation' component={ConversationPage}/>
-      {/*</ConversationProvider>*/}
+      </ConversationProvider>
     </Router>
 );
 

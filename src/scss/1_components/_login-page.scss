@@ -1,8 +1,4 @@
 .login-page {
-  max-height: 100vh;
-  height: 100vh;
-  background-color: $color-dark-gray;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,6 +6,18 @@
   padding: 0px 15px;
 
   &__form {
-    width: 25%;
+    width: 100%;
+
+    @media screen and (min-width: $small) {
+      width: 60%;
+    }
+
+    @media screen and (min-width: $tablet) {
+      width: 40%;
+    }
+
+    @media screen and (min-width: $note) {
+      width: 15%;
+    }
   }
 }

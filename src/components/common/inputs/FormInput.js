@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import callIfCallable from "../../../utils/callIfCallable";
 import ClassNames from 'classnames';
 
-const FormInput = ({ placeholder = '', label = '', onChange = () => {} }) => {
+const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => {} }) => {
   const [value, setValue] = useState('');
   const [isDanger, setIsDanger] = useState(false);
 
@@ -15,12 +15,13 @@ const FormInput = ({ placeholder = '', label = '', onChange = () => {} }) => {
 
   const inputClasses = ClassNames({
     'input': true,
-    'is-danger': isDanger
+    'is-small': true,
+    'is-danger': isDanger || !!error
   })
 
   return (
     <div className="field">
-      <label className="label has-text-light">{label}</label>
+      {label && <label className="label has-text-light">{label}</label>}
       <div className="control">
         <input
           className={inputClasses}
@@ -30,6 +31,7 @@ const FormInput = ({ placeholder = '', label = '', onChange = () => {} }) => {
           onChange={handleChange}
         />
       </div>
+      {error && <p className="help is-danger">{error}</p>}
     </div>
   );
 };

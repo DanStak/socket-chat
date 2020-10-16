@@ -1,71 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import connect from "../../../containers/conversation/connect";
-import io from "socket.io-client";
-import queryString from "query-string";
+import PageContainer from "../../common/PageContainer";
+import MessagesArea from "./MessagesArea";
+import MessageInput from "../../common/inputs/MessageInput";
 
-const SERVER_URL = 'http://localhost:5000';
-let socket;
 
-const ConversationPage = ({ conversation, location: { search } }) => {
+const ConversationPage = ({ conversation: { name, room, socket } , location: { search } }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [isMessageSending, setIsMessageSending] = useState(false);
 
 
   useEffect (() => {
-    const {name, room} = queryString.parse(search);
-
-    socket = io(SERVER_URL);
-
-    socket.emit('join', { name, room }, () => {})
-
-    return () => {
-      console.log(name, room)
-      socket.emit('disconnect', { name, room }, () => {});
+    if(name && room) {
+      socket.emit('join', { name, room }, () => {})
     }
-  }, [SERVER_URL, search]);
+  }, [name, room]);
 
   useEffect(() => {
     socket.on('message', (message) => {
-      console.log(message, 'MESSAGE RECEIVED')
       setMessages((messages) => [...messages, message]);
+      setIsMessageSending(false);
     })
+
+    return () => {
+      socket.emit('disconnect', { name, room }, () => {});
+      socket.off();
+    }
   }, [])
 
 
-  const handleKeyPress = (e) => {
-    if(e.key === 'Enter') {
-      e.preventDefault();
-      handleSendMessage()
-    }
-  }
-
-  const handleSendMessage = () => {
-    socket.emit('send-message', message, (error) => {
-      if(error) {
-        console.log(error, 'ERROR')
-      }
-      setMessage('')
-    });
-  }
-
   return (
-    <div>
-      <input
-        name='message'
-        value={message}
-        onChange={event => setMessage(event.target.value)}
-        onKeyPress={handleKeyPress}
-      />
-      {console.log(messages)}
-      <ul>
-        {messages.map((message, index) => (
-          <li key={index}>
-            {message.text}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <PageContainer className='conversation-page'>
+        <MessagesArea messages={messages}/>
+        <MessageInput/>
+    </PageContainer>
   );
 };
 
-export default ConversationPage;
+export default connect(ConversationPage);

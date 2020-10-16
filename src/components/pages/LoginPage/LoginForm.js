@@ -3,46 +3,58 @@ import FormInput from '../../common/inputs/FormInput';
 import connect from "../../../containers/conversation/connect";
 import { withRouter } from 'react-router-dom';
 
-const LoginForm = ({ conversation, history }) => {
+const LoginForm = ({ conversation: { socket }, history }) => {
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
+  const [error, setError] = useState('');
 
   const isFormValid = () => {
     return (name && room)
   }
 
-  const handleSetConversationParams = (event) => {
+  const setConversationParams = (event) => {
     event.preventDefault();
     if(isFormValid()) {
-      // conversation.setName(name);
-      // conversation.setRoom(room);
-      history.push(`/conversation?room=${room}&name=${name}`)
+      socket.emit('check-name-is-taken', name, (error) => {
+        if(error) {
+          setError(error);
+          return;
+        }
+        history.push(`/conversation?room=${room}&name=${name}`)
+      })
     }
+  }
+
+  const setValue = (value, callback) => {
+      callback(value);
+
+      if(error) {
+        setError('');
+      }
   }
 
   return (
     <div className='login-page__form'>
-      <h1 className="title is-1 has-text-light">Log In</h1>
+      <h1 className="has-text-centered title is-3 has-text-light">Join Us</h1>
 
-      <form onSubmit={handleSetConversationParams}>
+      <form onSubmit={setConversationParams}>
         <FormInput
           icon='fa-user'
-          placeholder='Type username'
-          label='Username'
-          onChange={setName}
+          placeholder='Type Username'
+          onChange={(value) => setValue(value, setName)}
+          error={error}
         />
 
         <FormInput
           icon='fa-user'
-          placeholder='Type room name'
-          label='Room name'
-          onChange={setRoom}
+          placeholder='Type Room Name'
+          onChange={(value) => setValue(value, setRoom)}
         />
         <button
-          className="button is-medium is-fullwidth mt-4"
+          className="button is-small is-fullwidth mt-4 is-success"
           type='submit'
         >
-          SUBMIT
+          JOIN
         </button>
       </form>
 
@@ -51,4 +63,4 @@ const LoginForm = ({ conversation, history }) => {
   );
 };
 
-export default withRouter(LoginForm);
+export default withRouter(connect(LoginForm));

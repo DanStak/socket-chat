@@ -1,14 +1,13 @@
 import React from 'react';
 import LoginForm from "./LoginForm";
+import PageContainer from "../../common/PageContainer";
 
 
 
-const CreateOrJoinPage = () => {
-  return (
-    <div className='login-page'>
+const CreateOrJoinPage = () => (
+    <PageContainer className='login-page'>
       <LoginForm/>
-    </div>
+    </PageContainer>
   );
-};
 
 export default CreateOrJoinPage;
