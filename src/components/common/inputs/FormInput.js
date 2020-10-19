@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import callIfCallable from "../../../utils/callIfCallable";
 import ClassNames from 'classnames';
+import withInputControl from "../../../hooks/withInputControl";
 
-const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => {} }) => {
-  const [value, setValue] = useState('');
+
+const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => {}, value, onSetValue }) => {
   const [isDanger, setIsDanger] = useState(false);
 
   const handleChange = (event) => {
     const { target: { value } } = event;
-    setValue(value)
+    onSetValue(value)
     setIsDanger(!value)
     callIfCallable(onChange, value)
   }
@@ -36,4 +37,4 @@ const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => 
   );
 };
 
-export default FormInput;
+export default withInputControl(FormInput);

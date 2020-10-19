@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import connect from '../../../containers/conversation/connect';
+import withInputControl from "../../../hooks/withInputControl";
 
-const MessageInput = ({ conversation: { socket }}) => {
-  const [message, setMessage] = useState('');
+const MessageInput = ({ conversation: { socket }, value, onSetValue}) => {
   const [isMessageSending, setIsMessageSending] = useState(false);
 
   const handleKeyPress = (e) => {
@@ -13,12 +13,11 @@ const MessageInput = ({ conversation: { socket }}) => {
   }
 
   const handleSendMessage = () => {
-    console.log(message)
-    socket.emit('send-message', message, (error) => {
+    socket.emit('send-message', value, (error) => {
       if(error) {
         console.log(error, 'ERROR')
       }
-      setMessage('');
+      onSetValue('');
       setIsMessageSending(true);
     });
   }
@@ -30,8 +29,8 @@ const MessageInput = ({ conversation: { socket }}) => {
         type="text"
         name='message'
         placeholder='Type a message'
-        value={message}
-        onChange={(event) => setMessage(event.target.value)}
+        value={value}
+        onChange={(event) => onSetValue(event.target.value)}
         onKeyPress={handleKeyPress}
       />
     </div>
@@ -39,4 +38,4 @@ const MessageInput = ({ conversation: { socket }}) => {
   );
 };
 
-export default connect(MessageInput);
+export default withInputControl(connect(MessageInput));

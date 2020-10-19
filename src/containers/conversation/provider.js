@@ -13,11 +13,12 @@ class ConversationProvider extends React.Component {
       name: '',
       room: '',
     }
-    this.socket = io(SERVER_URL);
+    this.socket = io(SERVER_URL)
   }
 
 
   componentDidMount() {
+    // this.socket = io(SERVER_URL);
     this.setSearchParamsFromUrl();
   }
 
@@ -28,7 +29,7 @@ class ConversationProvider extends React.Component {
   }
 
   componentWillUnmount() {
-    this.socket.off()
+    this.socket.off();
   }
 
   setSearchParamsFromUrl = () => {

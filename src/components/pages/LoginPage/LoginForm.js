@@ -6,18 +6,30 @@ import { withRouter } from 'react-router-dom';
 const LoginForm = ({ conversation: { socket }, history }) => {
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
-  const [error, setError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [roomError, setRoomError] = useState('');
 
   const isFormValid = () => {
     return (name && room)
   }
 
+  const setValidationErrors = () => {
+    if(!name) {
+      setNameError('Name is required');
+    }
+
+    if(!room) {
+      setRoomError('Room name is required');
+    }
+  }
+
   const setConversationParams = (event) => {
     event.preventDefault();
+    setValidationErrors();
     if(isFormValid()) {
       socket.emit('check-name-is-taken', name, (error) => {
         if(error) {
-          setError(error);
+          setNameError(error);
           return;
         }
         history.push(`/conversation?room=${room}&name=${name}`)
@@ -27,11 +39,14 @@ const LoginForm = ({ conversation: { socket }, history }) => {
 
   const setValue = (value, callback) => {
       callback(value);
-
-      if(error) {
-        setError('');
-      }
+      resetErrors();
   }
+
+  const resetErrors = () => {
+    setNameError('');
+    setRoomError('');
+  }
+
 
   return (
     <div className='login-page__form'>
@@ -39,16 +54,17 @@ const LoginForm = ({ conversation: { socket }, history }) => {
 
       <form onSubmit={setConversationParams}>
         <FormInput
-          icon='fa-user'
           placeholder='Type Username'
+          error={nameError}
           onChange={(value) => setValue(value, setName)}
-          error={error}
+          name='name'
         />
 
         <FormInput
-          icon='fa-user'
           placeholder='Type Room Name'
+          error={roomError}
           onChange={(value) => setValue(value, setRoom)}
+          name='room'
         />
         <button
           className="button is-small is-fullwidth mt-4 is-success"

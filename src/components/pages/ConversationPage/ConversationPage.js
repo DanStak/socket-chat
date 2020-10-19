@@ -24,8 +24,7 @@ const ConversationPage = ({ conversation: { name, room, socket } , location: { s
     })
 
     return () => {
-      socket.emit('disconnect', { name, room }, () => {});
-      socket.off();
+      socket.emit('remove-user-when-leave');
     }
   }, [])
 
