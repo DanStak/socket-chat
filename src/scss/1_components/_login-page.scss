@@ -1,0 +1,23 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0px 15px;
+
+  &__form {
+    width: 100%;
+
+    @media screen and (min-width: $small) {
+      width: 60%;
+    }
+
+    @media screen and (min-width: $tablet) {
+      width: 40%;
+    }
+
+    @media screen and (min-width: $note) {
+      width: 15%;
+    }
+  }
+}
