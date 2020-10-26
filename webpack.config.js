@@ -10,7 +10,7 @@ module.exports = {
     filename: 'main.js',
   },
   resolve: {
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.vue'],
+    extensions: ['.web.js', '.mjs', '.js', '.jsx', '.json', '.vue'],
     modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
   devServer: {
@@ -24,9 +24,9 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js?$/,
+        test: /.(js|jsx|mjs)$/,
         exclude: /node_module/,
-        use: 'babel-loader'
+        use: 'babel-loader',
       },
       {
         test: /\.(png|j?g|svg|gif)?$/,

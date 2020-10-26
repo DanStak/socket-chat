@@ -4,7 +4,7 @@ import ClassNames from 'classnames';
 import withInputControl from "../../../hooks/withInputControl";
 
 
-const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => {}, value, onSetValue }) => {
+const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => {}, value, onSetValue, ...props }) => {
   const [isDanger, setIsDanger] = useState(false);
 
   const handleChange = (event) => {
@@ -30,6 +30,7 @@ const FormInput = ({ error = '', placeholder = '', label = '', onChange = () => 
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
+          {...props}
         />
       </div>
       {error && <p className="help is-danger">{error}</p>}

@@ -1,40 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import connect from "../../../containers/conversation/connect";
+import React from 'react';
 import PageContainer from "../../common/PageContainer";
+import Sidebar from "./Sidebar";
 import MessagesArea from "./MessagesArea";
-import MessageInput from "../../common/inputs/MessageInput";
+import SocketProvider from "../../../containers/socket/provider";
+import ConversationProvider from "../../../containers/conversation/provider";
 
 
-const ConversationPage = ({ conversation: { name, room, socket } , location: { search } }) => {
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
-  const [isMessageSending, setIsMessageSending] = useState(false);
+const ConversationPage = () => (
+  <SocketProvider>
+    <ConversationProvider>
+      <PageContainer className='conversation-page'>
+        <Sidebar/>
+        <MessagesArea/>
+      </PageContainer>
+    </ConversationProvider>
+  </SocketProvider>
+);
 
-
-  useEffect (() => {
-    if(name && room) {
-      socket.emit('join', { name, room }, () => {})
-    }
-  }, [name, room]);
-
-  useEffect(() => {
-    socket.on('message', (message) => {
-      setMessages((messages) => [...messages, message]);
-      setIsMessageSending(false);
-    })
-
-    return () => {
-      socket.emit('remove-user-when-leave');
-    }
-  }, [])
-
-
-  return (
-    <PageContainer className='conversation-page'>
-        <MessagesArea messages={messages}/>
-        <MessageInput/>
-    </PageContainer>
-  );
-};
-
-export default connect(ConversationPage);
+export default ConversationPage;
