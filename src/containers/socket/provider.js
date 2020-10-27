@@ -21,7 +21,9 @@ const SocketProvider = (props) => {
     return () => {
       socket.close();
     }
-  }, [])
+  }, []);
+
+
 
   const value = {
     socket,

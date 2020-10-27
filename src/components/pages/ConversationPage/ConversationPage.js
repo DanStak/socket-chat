@@ -4,16 +4,19 @@ import Sidebar from "./Sidebar";
 import MessagesArea from "./MessagesArea";
 import SocketProvider from "../../../containers/socket/provider";
 import ConversationProvider from "../../../containers/conversation/provider";
+import UserProvider from "../../../containers/users/provider";
 
 
 const ConversationPage = () => (
   <SocketProvider>
-    <ConversationProvider>
-      <PageContainer className='conversation-page'>
-        <Sidebar/>
-        <MessagesArea/>
-      </PageContainer>
-    </ConversationProvider>
+    <UserProvider>
+      <ConversationProvider>
+        <PageContainer className='conversation-page'>
+          <Sidebar/>
+          <MessagesArea/>
+        </PageContainer>
+      </ConversationProvider>
+    </UserProvider>
   </SocketProvider>
 );
 

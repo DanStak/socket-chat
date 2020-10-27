@@ -1,28 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom'
 import SingleMessage from "./SingleMessage";
-import connectSocket from "../../../containers/socket/connect";
 import MessageInput from "../../common/inputs/MessageInput";
 import connectConversation from '../../../containers/conversation/connect'
+import ConversationBar from "./ConversationBar";
+import {getFromLocalStorage} from "../../../utils/localStorage";
+import LOCAL_STORAGE_ITEMS from "../../../configs/local-storage-items";
 
-const MessagesArea = ({ socket: { socket }, conversation: { actualInterlocutors } }) => {
 
-  const [messages, setMessage] = useState([]);
+const MessagesArea = ({ conversation: { actualInterlocutors, messages } }) => {
 
-  useEffect(() => {
-    if(socket) {
-      socket.on('receive-message', (message) => {
-        console.log(message)
-        setMessage(prevMessages => {return [...prevMessages, message]});
-      })
-    }
-    return () => {
-      if(socket) {
-        socket.off('receive-message');
-      }
-    }
-  }, [socket])
-
+  const user = getFromLocalStorage(LOCAL_STORAGE_ITEMS.USER)
 
   if(actualInterlocutors.length === 0) {
     return null
@@ -30,12 +18,17 @@ const MessagesArea = ({ socket: { socket }, conversation: { actualInterlocutors 
 
   return (
     <div className='message-area'>
+      <ConversationBar/>
       <ScrollToBottom
         className='message-area__scroll-list'
       >
-        <ul>
+        <ul className='message-area__messages-list'>
           {messages.map((message, index) => (
-            <SingleMessage key={index} message={message}/>
+            <SingleMessage
+              key={index}
+              message={message}
+              myId={user._id}
+            />
           ))}
         </ul>
       </ScrollToBottom>
@@ -44,4 +37,4 @@ const MessagesArea = ({ socket: { socket }, conversation: { actualInterlocutors 
   );
 };
 
-export default connectSocket(connectConversation(MessagesArea));
+export default connectConversation(MessagesArea);

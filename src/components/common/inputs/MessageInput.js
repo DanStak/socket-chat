@@ -1,33 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import withInputControl from "../../../hooks/withInputControl";
-import connect from "../../../containers/socket/connect";
+import connectSocket from "../../../containers/socket/connect";
 import connectConversation from '../../../containers/conversation/connect'
-import {getFromLocalStorage} from "../../../utils/localStorage";
-import LOCAL_STORAGE_ITEMS from "../../../configs/local-storage-items";
 
 
-const MessageInput = ({ socket: { socket }, value, onSetValue, conversation: { actualInterlocutors }}) => {
-  const [isMessageSending, setIsMessageSending] = useState(false);
+const MessageInput = ({ value, onSetValue, conversation: { sendMessage }}) => {
 
   const handleKeyPress = (e) => {
     if(e.key === 'Enter') {
       e.preventDefault();
-      handleSendMessage()
+      sendMessage(value, () => onSetValue(''))
     }
-  }
-
-  const handleSendMessage = () => {
-    const user = getFromLocalStorage(LOCAL_STORAGE_ITEMS.USER);
-    const message = {
-      text: value,
-      interlocutors: [actualInterlocutors, user._id],
-      from: user._id,
-    }
-    socket.emit('send-message', message, () => {
-      console.log('wiadomość wysłana')
-      onSetValue('');
-      setIsMessageSending(true);
-    });
   }
 
   return (
@@ -46,4 +29,4 @@ const MessageInput = ({ socket: { socket }, value, onSetValue, conversation: { a
   );
 };
 
-export default connect(connectConversation(withInputControl(MessageInput)));
+export default connectSocket(connectConversation(withInputControl(MessageInput)));

@@ -5,6 +5,12 @@
 
   &__scroll-list {
     width: 100%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 90px);
+  }
+
+  &__messages-list {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
   }
 }
