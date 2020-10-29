@@ -3,7 +3,6 @@ import withInputControl from "../../../hooks/withInputControl";
 import connectSocket from "../../../containers/socket/connect";
 import connectConversation from '../../../containers/conversation/connect'
 
-
 const MessageInput = ({ value, onSetValue, conversation: { sendMessage }}) => {
 
   const handleKeyPress = (e) => {

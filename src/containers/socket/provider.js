@@ -4,7 +4,6 @@ import LOCAL_STORAGE_ITEMS from "../../configs/local-storage-items";
 import io from 'socket.io-client'
 import {getFromLocalStorage} from "../../utils/localStorage";
 
-
 const SERVER_URL = 'http://localhost:5000'
 
 const SocketProvider = (props) => {
@@ -19,10 +18,10 @@ const SocketProvider = (props) => {
     socketIo.emit('join');
 
     return () => {
-      socket.close();
+      console.log(socket, 'UNMMOUNT')
+      // socket.close();
     }
   }, []);
-
 
 
   const value = {

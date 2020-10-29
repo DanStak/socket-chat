@@ -1,16 +1,19 @@
 import React, {useContext, useEffect, useState} from 'react';
 import ConversationContext from "./context";
 import { withRouter } from "react-router-dom";
-import {getFromLocalStorage} from "../../utils/localStorage";
+import {getFromLocalStorage, setInLocalStorage} from "../../utils/localStorage";
 import LOCAL_STORAGE_ITEMS from "../../configs/local-storage-items";
 import axios from "axios";
 import API from "../../services/API";
 import connectSocket from '../socket/connect'
+import Factory from "../../models/Messages/Factory";
 
 const ConversationProvider = ({ socket: { socket }, children }) => {
   const [actualInterlocutors, setActualInterlocutors] = useState('');
   const [ messages, setMessages ] = useState([]);
   const [ unreadMessagesInterlocutorsIds, setUnreadMessagesInterlocutorsIds ] = useState([]);
+  const [ isDrawerOpen, setIsDrawerOpen] = useState(false)
+
   const user = getFromLocalStorage(LOCAL_STORAGE_ITEMS.USER)
 
   useEffect(() => {
@@ -30,14 +33,7 @@ const ConversationProvider = ({ socket: { socket }, children }) => {
   useEffect(() => {
     if(socket) {
       socket.on('receive-message', (message) => {
-        const isCurrentConversationMatchWithSender = message.senderId === actualInterlocutors;
-        if(isCurrentConversationMatchWithSender) {
-          setMessages(prevMessages => {return [...prevMessages, message]});
-        } else {
-          setUnreadMessagesInterlocutorsIds((prevState => {
-            return [...prevState, message.senderId];
-          }))
-        }
+        onReceiveMessage(message);
       })
     }
 
@@ -48,14 +44,23 @@ const ConversationProvider = ({ socket: { socket }, children }) => {
     }
   }, [socket, actualInterlocutors]);
 
+  const onReceiveMessage = (message) => {
+    const isCurrentConversationMatchWithSender = message.sender.id === actualInterlocutors;
+    if(isCurrentConversationMatchWithSender) {
+      setMessages(prevMessages => {return [...prevMessages, message]});
+    } else {
+      setUnreadMessagesInterlocutorsIds((prevState => {
+        return [...prevState, message.sender.id];
+      }))
+    }
+  }
 
   const sendMessage = (value, callback) => {
-    const message = {
-      text: value,
-      interlocutors: [actualInterlocutors, user._id],
-      senderId: user._id,
-      senderName: user.name,
-    }
+    const message = Factory.create({
+      body: value,
+      type: 'text',
+    }).raw();
+
     setMessages(prevMessages => {return [...prevMessages, message]});
 
     socket.emit('send-message', message, () => {
@@ -65,14 +70,38 @@ const ConversationProvider = ({ socket: { socket }, children }) => {
 
   const startOrJoinToConversation = (actualInterlocutor) => {
     setActualInterlocutors(actualInterlocutor._id);
-    const interlocutors = [actualInterlocutor._id, user._id]
+    const interlocutors = [actualInterlocutor._id, user._id];
+
+    saveConversationStateInLocalStorage(actualInterlocutor);
+
     socket.emit('start-conversation', interlocutors);
-    removeInterlocutorFromUnread(actualInterlocutor._id)
+
+    removeInterlocutorFromUnread(actualInterlocutor._id);
+
+    if(isDrawerOpen) {
+      setIsDrawerOpen(false);
+    }
+  }
+
+  const saveConversationStateInLocalStorage = (actualInterlocutors) => {
+    const conversationState = {
+      sender: {
+        name: user.name,
+        id: user._id,
+      },
+      actualInterlocutors: actualInterlocutors._id,
+    }
+
+    setInLocalStorage(LOCAL_STORAGE_ITEMS.CONVERSATION_STATE, conversationState)
   }
 
   const removeInterlocutorFromUnread = (id) => {
     const unreadWithoutCurrent = unreadMessagesInterlocutorsIds.filter(interlocutorId => interlocutorId !== id );
     setUnreadMessagesInterlocutorsIds(unreadWithoutCurrent);
+  }
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
   }
 
   const getContext = () => ({
@@ -82,6 +111,8 @@ const ConversationProvider = ({ socket: { socket }, children }) => {
     sendMessage,
     startOrJoinToConversation,
     unreadMessagesInterlocutorsIds,
+    isDrawerOpen,
+    toggleDrawer,
   })
 
   return (

@@ -1,11 +1,12 @@
 .message-area {
-  width: 100%;
+  flex: 1;
   height: 100%;
   position: relative;
+  box-sizing: border-box;
 
   &__scroll-list {
     width: 100%;
-    height: calc(100vh - 90px);
+    height: calc(100vh - 100px);
   }
 
   &__messages-list {

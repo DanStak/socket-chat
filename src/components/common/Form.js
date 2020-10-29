@@ -18,7 +18,6 @@ const LoginForm = ({ title, requestUrl, onFinish, }) => {
 
     axios.post(API.API_BASE + requestUrl, { name, password })
       .then((response) => {
-        console.log(response, 'response')
         callIfCallable(onFinish, response.data)
       })
       .catch((error) => {
